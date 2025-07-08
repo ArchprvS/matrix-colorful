@@ -106,13 +106,13 @@
   .circle::after {
     content: "";
     position: absolute;
-    inset: -5px;
+    inset: -10px;
     border-radius: 50%;
     border: 3px solid transparent;
-    border-top: 3px solid #30303090;
-    border-right: 3px solid #fff0;
-    border-bottom: 3px solid #fff0;
-    border-left: 3px solid #fff0;
+    border-top: 3px solid #00b7ffba;
+    border-right: 3px solid rgba(223, 14, 129, 0.737);
+    border-bottom: 3px solid rgba(223, 208, 7, 0.841);
+    border-left: 3px solid rgba(249, 87, 0, 0.811);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s;
@@ -120,7 +120,7 @@
 
   .step:hover .circle::after {
     opacity: 1;
-    animation: spin-impulse 2s ease-in-out infinite;
+    animation: spin-impulse 1.5s linear infinite;
   }
 
   @keyframes spin-impulse {
