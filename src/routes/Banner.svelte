@@ -53,7 +53,9 @@
 .banner-content button {
   padding: 10px 20px;
   border: 2px solid #ffffff;
-  background: linear-gradient(110deg,#009fe3bf, #d72679c3, #ffb300c5);
+  background: linear-gradient(110deg, #009fe3bf, #d72679c3, #ffb300c5, #009fe3bf);
+  background-size: 300% 100%;
+  background-position: 0% 50%;
   font-family: "Rajdhani";
   font-weight: 500;
   font-size: 20px;
@@ -61,8 +63,21 @@
   transition: all 0.3s ease-in-out;
   position: relative;
   overflow: hidden;
-  border-radius: 20px; /* Dodaj border-radius tutaj, z wartością, która Ci odpowiada */
+  border-radius: 20px;
   cursor: pointer;
+  animation: gradient-move 8s ease-in-out infinite;
+}
+
+@keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .banner-content button:hover {
@@ -80,12 +95,13 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(95deg, transparent, #d7d7d7, #a5a5a5, #d9d9d9, transparent);
+  background: linear-gradient(95deg, transparent, #009fe3bf, #d72679c3, #ffb300c5, transparent);
   transition: left 0.4s ease-in-out;
   border-radius: 5px; /* Dodaj border-radius również tutaj, aby gradient był zaokrąglony */
 }
 
 .banner-content button:hover::before {
+  background: linear-gradient(95deg, transparent, #d7d7d7, #a5a5a5, #d9d9d9, transparent);
   left: 100%;
 }
 </style>
