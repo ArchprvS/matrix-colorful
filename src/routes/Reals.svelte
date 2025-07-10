@@ -9,10 +9,6 @@
     { name: "Firma E", src: "logo-ws.png", url: "https://firma-e.pl" },
     { name: "Firma E", src: "logo-kronos.png", url: "https://firma-e.pl" },
   ];
-
-  // const show_link = () => {
-
-  // }
 </script>
 
 <section class="reals">

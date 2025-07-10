@@ -1,11 +1,13 @@
 <script>
+  import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling';
+  import { setGlobalOptions } from 'svelte-scrolling';
 </script>
 
 <div class="menu">
   <img src="./logo_rgb.png" alt="logo" class="logo" />
   <button class="menuitem">Tworzenie</button>
   <button class="menuitem">Realizacje</button>
-  <button class="menuitem">Kontakt</button>
+  <button class="menuitem"><a use:scrollTo={{ ref: 'cont', duration: 2000 }}>Kontakt</a></button>
   <button class="menuitem">FAQ</button>
 </div>
 
@@ -29,7 +31,7 @@
 
     /* background-color: rgba(170, 18, 18, 0.85); */
   }
-  .menuitem {
+  .menuitem, .menuitem a {
     width: 20%;
     height: 100%;
     margin: 0 auto;
@@ -38,6 +40,7 @@
     font-family: "Rajdhani";
     font-size: 20px;
     font-weight: 800;
+    text-decoration: none;
     border: none;
     /* background-color: rgba(23, 23, 23, 0.85); */
     background-color: transparent;
