@@ -1,4 +1,7 @@
 <script>
+  import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling';
+  import { setGlobalOptions } from 'svelte-scrolling';
+
   const faqs = [
     {
       question: "Ile kosztuje strona internetowa?",
@@ -20,7 +23,7 @@
   }
 </script>
 
-<section class="faq-section">
+<section id="faq_sec" class="faq-section">
   <h2>Najczęściej zadawane pytania</h2>
   <div class="faq-list">
     {#each faqs as faq, idx}

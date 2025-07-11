@@ -11,6 +11,9 @@
 </div>
 
 <style>
+  :global(html) {
+    scroll-behavior: smooth;
+  }
   .banner {
     width: 100%;
     max-width: 1100px;

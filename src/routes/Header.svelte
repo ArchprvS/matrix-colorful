@@ -1,14 +1,14 @@
 <script>
-  import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling';
-  import { setGlobalOptions } from 'svelte-scrolling';
+  import { scrollTo, scrollRef, scrollTop } from "svelte-scrolling";
+  import { setGlobalOptions } from "svelte-scrolling";
 </script>
 
 <div class="menu">
-  <img src="./logo_rgb.png" alt="logo" class="logo" />
-  <button class="menuitem">Tworzenie</button>
-  <button class="menuitem">Realizacje</button>
-  <button class="menuitem"><a use:scrollTo={{ ref: 'cont', duration: 2000 }}>Kontakt</a></button>
-  <button class="menuitem">FAQ</button>
+  <a href="#"><img src="./logo_rgb.png" alt="logo" class="logo" /></a>
+  <a href="#cre_sec" class="menuitem">Tworzenie</a>
+  <a href="#rea_sec" class="menuitem">Realizacje</a>
+  <a href="#con_sec" class="menuitem">Kontakt</a>
+  <a href="#faq_sec" class="menuitem">FAQ</a>
 </div>
 
 <style>
@@ -25,13 +25,14 @@
     background-color: rgba(23, 23, 23, 0.85);
   }
   .logo {
-    width: 20%;
+    width: 100%;
     max-width: 200px;
-    padding: 0px 20px 0px 20px;
+    padding: 5px 20px 0px 20px;
+    cursor: pointer;
 
     /* background-color: rgba(170, 18, 18, 0.85); */
   }
-  .menuitem, .menuitem a {
+  .menuitem {
     width: 20%;
     height: 100%;
     margin: 0 auto;
@@ -40,6 +41,7 @@
     font-family: "Rajdhani";
     font-size: 20px;
     font-weight: 800;
+    text-align: center;
     text-decoration: none;
     border: none;
     /* background-color: rgba(23, 23, 23, 0.85); */

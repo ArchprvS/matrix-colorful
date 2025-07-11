@@ -4,8 +4,8 @@
   let name = $state('');
 </script>
 
-<section use:scrollRef={'cont'} class="contact-form-section">
-  <h2>Cześć {name}! <br>Zapraszamy do kontaktu.</h2>
+<section id="con_sec" class="contact-form-section">
+  <h2>Cześć {name}! <br>Napisz do nas!</h2>
   <form class="contact-form">
     <div class="form-row">
       <input type="text" name="name" placeholder="Imię" bind:value={name} required />

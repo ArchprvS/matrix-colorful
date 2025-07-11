@@ -1,5 +1,7 @@
 <script>
-  // Przykładowe dane – podmień src na własne ścieżki do logo
+  import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling';
+  import { setGlobalOptions } from 'svelte-scrolling';
+
   const realizacje = [
     { name: "Firma A", src: "AVENET.svg", url: "https://firma-a.pl" },
     { name: "Firma B", src: "bajlando.png", url: "https://firma-b.pl" },
@@ -11,7 +13,7 @@
   ];
 </script>
 
-<section class="reals">
+<section id="rea_sec" class="reals">
   <h2>Nasze realizacje</h2>
   <div class="logos">
     {#each realizacje as r}

@@ -19,7 +19,7 @@
   ];
 </script>
 
-<section class="process">
+<section id="cre_sec" class="process">
   <h2>Proces tworzenia</h2>
   <div class="steps">
     {#each steps as step, i}
