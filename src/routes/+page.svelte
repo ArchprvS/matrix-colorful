@@ -9,11 +9,13 @@
   import Reals from "./Reals.svelte";
   import Contactform from "./Contactform.svelte";
   import Faq from "./Faq.svelte";
+  import Offer from './Offer.svelte';
 </script>
 
 <Header />
 <div class="container">
   <Banner />
+  <Offer />
   <Creating />
   <Reals />
   <Contactform />
