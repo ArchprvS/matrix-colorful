@@ -3,28 +3,33 @@
     {
       title: "Strony i sklepy internetowe",
       desc: "Nowoczesne, responsywne strony oraz sklepy internetowe dopasowane do Twoich potrzeb.",
-      icon: "🌐"
+      icon: "🌐",
+      src: "./shopping-cart.png",
     },
     {
       title: "Aplikacje Webowe",
       desc: "Dedykowane aplikacje webowe wspierające rozwój Twojego biznesu.",
-      icon: "💻"
+      icon: "💻",
+      src: "./laptop.png",
     },
     {
       title: "SEO – pozycjonowanie",
       desc: "Zadbaj o widoczność swojej strony w wyszukiwarkach i pozyskaj nowych klientów.",
-      icon: "🚀"
+      icon: "🚀",
+      src: "./rocket.png",
     },
     {
       title: "Automatyzacje sprzedaży",
       desc: "Integracje i automatyzacje procesów sprzedażowych dla większej efektywności.",
-      icon: "🤖"
+      icon: "🤖",
+      src: "./automation.png",
     },
     {
       title: "Administrowanie serwerami",
       desc: "Bezpieczne i niezawodne zarządzanie Twoją infrastrukturą IT.",
-      icon: "🛡️"
-    }
+      icon: "🛡️",
+      src: "./security.png",
+    },
   ];
 </script>
 
@@ -33,7 +38,7 @@
   <div class="offer-list">
     {#each offers as offer, i}
       <div class="offer-card" style="animation-delay: {i * 0.13}s">
-        <div class="offer-icon">{offer.icon}</div>
+        <div class="offer-icon"><img src={offer.src} alt="offer" /></div>
         <div class="offer-content">
           <h3>{offer.title}</h3>
           <p>{offer.desc}</p>
@@ -49,9 +54,9 @@
     max-width: 1100px;
     margin: 8vh auto 4vh auto;
     padding: 4vh 2vw;
-    background: rgba(245,245,245,0.65);
+    background: rgba(245, 245, 245, 0.65);
     border-radius: 2vw;
-    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.10);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     z-index: 2;
     position: relative;
     overflow: hidden;
@@ -85,8 +90,11 @@
     align-items: center;
     opacity: 0;
     transform: translateY(40px) scale(0.98);
-    animation: offer-fade-in 0.7s cubic-bezier(.4,1.5,.5,1) forwards;
-    transition: box-shadow 0.2s, transform 0.2s, background-color 0.2s;
+    animation: offer-fade-in 0.7s cubic-bezier(0.4, 1.5, 0.5, 1) forwards;
+    transition:
+      box-shadow 0.2s,
+      transform 0.2s,
+      background-color 0.2s;
     cursor: pointer;
     position: relative;
   }
@@ -96,13 +104,15 @@
     background: rgba(255, 255, 255, 0.652);
   }
   .offer-icon {
-    font-size: 2.5em;
     margin-bottom: 0.7em;
     filter: drop-shadow(0 2px 8px #009fe344);
     transition: filter 0.2s;
   }
+  .offer-icon img {
+    max-width: 30px;
+  }
   .offer-card:hover .offer-icon {
-    filter: drop-shadow(0 4px 16px #d72679c3);
+    filter: drop-shadow(0 4px 16px rgb(220, 145, 32));
   }
   .offer-content h3 {
     font-family: "Rajdhani", "Segoe UI", Arial, sans-serif;
