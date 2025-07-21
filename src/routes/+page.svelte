@@ -10,10 +10,11 @@
   import Contactform from "./Contactform.svelte";
   import Faq from "./Faq.svelte";
   import Offer from './Offer.svelte';
+  import Mobileheader from './Mobileheader.svelte';
 </script>
 
-<Header />
 <div class="container">
+  <Mobileheader />
   <Banner />
   <Offer />
   <Creating />
