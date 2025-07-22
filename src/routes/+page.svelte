@@ -13,8 +13,8 @@
   import Mobileheader from './Mobileheader.svelte';
 </script>
 
+<Mobileheader />
 <div class="container">
-  <Mobileheader />
   <Banner />
   <Offer />
   <Creating />

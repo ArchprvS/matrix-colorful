@@ -53,7 +53,7 @@
     width: 100%;
     max-width: 1100px;
     margin: 8vh auto 4vh auto;
-    padding: 4vh 2vw;
+    padding: 4vh 4vw;
     background: rgba(245, 245, 245, 0.65);
     border-radius: 2vw;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
@@ -109,7 +109,7 @@
     transition: filter 0.2s;
   }
   .offer-icon img {
-    max-width: 30px;
+    max-width: 50px;
   }
   .offer-card:hover .offer-icon {
     filter: drop-shadow(0 4px 16px rgb(220, 145, 32));

@@ -17,8 +17,51 @@
     <div class="menu_line" id="lower" class:low_tr={menuButton}></div>
   </div>
 </div>
+<div class="list" class:list_in={menuButton}>
+  <div class="menu_item"><img alt="icon" src="new-product.png"><p class="menu_p">Tworzenie</p></div>
+  <div class="menu_item"><img alt="icon" src="coding.png"><p class="menu_p">Realizacje</p></div>
+  <div class="menu_item"><img alt="icon" src="chatbot.png"><p class="menu_p">Kontakt</p></div>
+  <div class="menu_item"><img alt="icon" src="communicate.png"><p class="menu_p">FAQ</p></div>
+</div>
 
 <style>
+  .menu_item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .menu_item img {
+    width: 50%;
+    margin-bottom: 20px;
+  }
+  .menu_p {
+    font-family: "Rajdhani";
+    font-size: 40px;
+    font-weight: 500;
+    width: 100%;
+    text-align: center;
+    color: white;
+  }
+  .list {
+    background-color: rgba(23, 23, 23, 0.85);
+    padding: 0 20px 30% 20px;
+    position: fixed;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    transform: translateY(100%);
+    transition: all 1s ease;
+  }
+  .list_in {
+    transform: translateY(0%);
+    transition: all 1s ease;
+  }
+
   .menu_button {
     width: 40px;
     height: 10%;
@@ -45,6 +88,7 @@
   }
   .menu {
     max-width: 100%;
+    padding: 0px 20px 0px 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -61,32 +105,5 @@
     cursor: pointer;
 
     /* background-color: rgba(170, 18, 18, 0.85); */
-  }
-  .menuitem {
-    width: 20%;
-    height: 100%;
-    margin: 0 auto;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-family: "Rajdhani";
-    font-size: 20px;
-    font-weight: 800;
-    text-align: center;
-    text-decoration: none;
-    border: none;
-    /* background-color: rgba(23, 23, 23, 0.85); */
-    background-color: transparent;
-    color: silver;
-    transition: all 0.2s ease;
-  }
-  .menuitem:hover {
-    width: 25%;
-    margin: 0 auto;
-    font-family: "Rajdhani";
-    border: none;
-    background-color: rgba(245, 245, 245, 0.65);
-    color: rgb(30, 30, 30);
-    cursor: pointer;
-    transform: scale(1.03);
   }
 </style>

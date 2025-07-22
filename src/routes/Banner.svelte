@@ -107,4 +107,9 @@
   background: linear-gradient(95deg, transparent, #d7d7d7, #a5a5a5, #d9d9d9, transparent);
   left: 100%;
 }
+@media (max-width: 650px) {
+  .banner-content h1 {
+    font-size: 45px;
+  }
+}
 </style>
