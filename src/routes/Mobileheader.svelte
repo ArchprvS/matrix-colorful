@@ -6,22 +6,38 @@
 
   const mb_transform = () => {
     menuButton = !menuButton;
-  }
+  };
 </script>
 
 <div class="menu">
   <a href="#"><img src="./logo_rgb.png" alt="logo" class="logo" /></a>
-  <div class="menu_button" class:mb_transformed={menuButton} onclick={mb_transform}>
+  <div
+    class="menu_button"
+    class:mb_transformed={menuButton}
+    onclick={mb_transform}
+  >
     <div class="menu_line" id="upper" class:upp_tr={menuButton}></div>
     <div class="menu_line" id="middle" class:mid_tr={menuButton}></div>
     <div class="menu_line" id="lower" class:low_tr={menuButton}></div>
   </div>
 </div>
 <div class="list" class:list_in={menuButton}>
-  <div class="menu_item"><img alt="icon" src="new-product.png"><p class="menu_p">Tworzenie</p></div>
-  <div class="menu_item"><img alt="icon" src="coding.png"><p class="menu_p">Realizacje</p></div>
-  <div class="menu_item"><img alt="icon" src="chatbot.png"><p class="menu_p">Kontakt</p></div>
-  <div class="menu_item"><img alt="icon" src="communicate.png"><p class="menu_p">FAQ</p></div>
+  <div class="menu_item" class:menu_item_in={menuButton}>
+    <!-- <img alt="icon" src="new-product.png" /> -->
+    <p class="menu_p">Tworzenie</p>
+  </div>
+  <div class="menu_item" class:menu_item_in={menuButton}>
+    <!-- <img alt="icon" src="coding.png" /> -->
+    <p class="menu_p">Realizacje</p>
+  </div>
+  <div class="menu_item" class:menu_item_in={menuButton}>
+    <!-- <img alt="icon" src="communicate.png" /> -->
+    <p class="menu_p">Kontakt</p>
+  </div>
+  <div class="menu_item" class:menu_item_in={menuButton}>
+    <!-- <img alt="icon" src="chatbot.png" /> -->
+    <p class="menu_p">FAQ</p>
+  </div>
 </div>
 
 <style>
@@ -30,9 +46,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    margin: 10px 0;
+    transform: translateY(100px);
+    transition: padding-right 0.3s ease, background-color 0.3s ease, transform 1.5s ease;
+  }
+  .menu_item_in {
+    transform: translateY(0px);
+  }
+  .menu_item:hover {
+    background-color: rgba(90, 90, 90, 0.85);
+    padding-right: 20px;
   }
   .menu_item img {
-    width: 50%;
+    width: 40%;
     margin-bottom: 20px;
   }
   .menu_p {
@@ -40,7 +67,8 @@
     font-size: 40px;
     font-weight: 500;
     width: 100%;
-    text-align: center;
+    text-align: right;
+    padding: 10px 10%;
     color: white;
   }
   .list {
@@ -50,10 +78,10 @@
     z-index: 1000;
     width: 100%;
     height: 100%;
-    display: grid;
+    /* display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 10px;
+    gap: 10px; */
     transform: translateY(100%);
     transition: all 1s ease;
   }
@@ -72,7 +100,7 @@
     margin: 10px 0px 10px 0px;
     width: 40px;
     background-color: aliceblue;
-   transition: all 1s ease;
+    transition: all 1s ease;
   }
   .mid_tr {
     background-color: transparent;

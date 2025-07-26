@@ -1,11 +1,44 @@
 <script>
-  // Możesz dodać tu logikę, jeśli baner ma być dynamiczny
+  let text = "Projektujemy i wdrażamy po końcową "
+  let dynamic_text_upper = $state('');
+  let dynamic_text_lower = $state('');
+  // let dynamic_dot = $state('\u2007');
+  let dot_status = $state('transparent');
+
+  const typeWriter = () => {
+    let i = 0;
+    let dot = false;
+    const interval_0 = setInterval(() => {
+      if (i < 23) {
+        dynamic_text_upper += text[i];
+      }
+      else {
+        dynamic_text_lower += text[i];
+      }
+      i++;
+      if (i === text.length) {
+        dot_status = 'black';
+        clearInterval(interval_0);
+        setInterval(() => {
+          if (dot) {
+            dot_status = 'black';
+            dot = !dot;
+          }
+          else {
+            dot_status = 'transparent';
+            dot = !dot;
+          }
+        }, 500);
+      }
+    }, 50);
+  }
+  typeWriter()
 </script>
 
 <div class="banner">
   <div class="banner-content">
     <h1>Wykreujemy twoją<br />cyfrową przyszłość</h1>
-    <p>Twój partner w internetowej<br />transformacji biznesu</p>
+    <p>{dynamic_text_upper}<br />{dynamic_text_lower}<span style="color: {dot_status}">.</span></p>
     <button>Bezpłatna konsultacja</button>
   </div>
 </div>
@@ -17,14 +50,14 @@
   .banner {
     width: 100%;
     max-width: 1100px;
-    min-height: 40vh;
+    min-height: 85vh;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(245, 245, 245, 0.65);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
     border-radius: 2vw;
-    margin: 8vh auto 4vh auto;
+    margin: 4vh auto 4vh auto;
     position: relative;
     z-index: 2;
     overflow: hidden;
@@ -109,7 +142,17 @@
 }
 @media (max-width: 650px) {
   .banner-content h1 {
-    font-size: 45px;
+    font-size: 50px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  .banner-content p {
+    font-size: 30px;
+  }
+  .banner-content button {
+    font-size: 30px;
+    margin-top: 50px;
+    margin-bottom: 50px;
   }
 }
 </style>
