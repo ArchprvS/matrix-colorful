@@ -2,30 +2,63 @@
   import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling';
   import { setGlobalOptions } from 'svelte-scrolling';
   let name = $state('');
+  let surname = $state('');
+  let email = $state('');
+  let subject = $state('');
+  let message = $state('');
+  let status = $state('');
+
+  async function handleSubmit() {
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({name, surname, email, subject, message, status})
+      });
+
+      if (response.ok) {
+        status = 'Wiadomość wysłana pomyślnie!';
+        name = '';
+        surname = '';
+        email = '';
+        subject = '';
+        message = '';
+      } else {
+        status = 'Błąd podczas wysyłania wiadomości.';
+      }
+    } catch (error) {
+  status = 'Wystąpił błąd. Spróbuj ponownie później.'
+}
+  }
 </script>
 
 <section id="con_sec" class="contact-form-section">
   <h2>Cześć {name}! <br>Napisz do nas!</h2>
-  <form class="contact-form">
+  <form class="contact-form" on:submit|preventDefault={handleSubmit}>
     <div class="form-row">
       <input type="text" name="name" placeholder="Imię" bind:value={name} required />
     </div>
     <div class="form-row">
-      <input type="text" name="surname" placeholder="Nazwisko" required />
+      <input type="text" name="surname" placeholder="Nazwisko" bind:value={surname} required />
     </div>
     <div class="form-row">
-      <input type="email" name="email" placeholder="Adres e-mail" required />
+      <input type="email" name="email" placeholder="Adres e-mail" bind:value={email} required />
     </div>
     <div class="form-row">
-      <input type="text" name="subject" placeholder="Temat" />
+      <input type="text" name="subject" placeholder="Temat" bind:value={subject} />
     </div>
     <div class="form-row">
-      <textarea name="message" rows="5" placeholder="Wiadomość" required></textarea>
+      <textarea name="message" rows="5" placeholder="Wiadomość" bind:value={message} required></textarea>
     </div>
     <div class="form-row">
       <button type="submit">Wyślij wiadomość</button>
     </div>
   </form>
+  {#if status}
+    <p>{status}</p>
+  {/if}
 </section>
 
 <style>

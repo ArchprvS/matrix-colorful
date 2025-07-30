@@ -1,8 +1,9 @@
 <script>
+  import { onMount } from 'svelte';
+
   let text = "Projektujemy i wdrażamy po końcową "
   let dynamic_text_upper = $state('');
   let dynamic_text_lower = $state('');
-  // let dynamic_dot = $state('\u2007');
   let dot_status = $state('transparent');
 
   const typeWriter = () => {
@@ -17,11 +18,11 @@
       }
       i++;
       if (i === text.length) {
-        dot_status = 'black';
+        dot_status = '#444';
         clearInterval(interval_0);
         setInterval(() => {
           if (dot) {
-            dot_status = 'black';
+            dot_status = '#444';
             dot = !dot;
           }
           else {
@@ -33,12 +34,33 @@
     }, 50);
   }
   typeWriter()
+
+
+  let particles = Array.from({ length: 30 }, (_, i) => ({
+    id: i,
+    size: Math.random() * 10 + 6, // Particle size between 2-6px
+    hue: 350 + Math.random() * 50, // Random hue for color variation
+    delay: Math.random() * 2, // Random animation delay up to 2s
+    angle: Math.random() * 360, // Random angle for radial movement
+  }));
 </script>
 
 <div class="banner">
   <div class="banner-content">
     <h1>Wykreujemy twoją<br />cyfrową przyszłość</h1>
     <p>{dynamic_text_upper}<br />{dynamic_text_lower}<span style="color: {dot_status}">.</span></p>
+    {#each particles as particle (particle.id)}
+    <div
+      class="particle"
+      style="
+        width: {particle.size}px;
+        height: {particle.size}px;
+        --color: hsl({particle.hue}, 65%, 65%);
+        animation-delay: {particle.delay}s;
+        --angle: {particle.angle}deg;
+      "
+    ></div>
+  {/each}
     <button>Bezpłatna konsultacja</button>
   </div>
 </div>
@@ -77,6 +99,7 @@
     text-shadow: 0 2px 16px #fff8;
     text-align: center;
     line-height: 120%;
+    z-index: 1000;
   }
   .banner-content p {
     font-size: clamp(1.1rem, 2.8vw, 1.7rem);
@@ -143,16 +166,52 @@
 @media (max-width: 650px) {
   .banner-content h1 {
     font-size: 50px;
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 30px;
+    margin-bottom: 30px;
   }
   .banner-content p {
     font-size: 30px;
   }
   .banner-content button {
     font-size: 30px;
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 30px;
+    margin-bottom: 30px;
   }
 }
+
+.particle {
+    position: absolute;
+    opacity: 0;
+    border-radius: 50%;
+    background: var(--color);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    animation: emit 6s linear infinite;
+    transform-origin: center;
+    top: 40%;
+    left: 50%;
+    z-index: 10;
+  }
+
+  @keyframes emit {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) scale(0.3);
+    }
+    50% {
+      opacity: 0.5;
+    }
+    75% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(
+        calc(cos(var(--angle)) * 430px),
+        calc(sin(var(--angle)) * 430px)
+      ) scale(1);
+    }
+  }
 </style>
