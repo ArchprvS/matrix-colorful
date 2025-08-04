@@ -48,11 +48,13 @@
     max-width: 1100px;
     margin: 8vh auto 4vh auto;
     padding: 4vh 2vw;
-    background: rgba(245,245,245,0.65);
+    background: rgba(245, 245, 245, 0.5);
+    border: 1px solid rgb(245, 245, 245);
     border-radius: 2vw;
     box-shadow: 0 8px 32px 0 rgba(31,38,135,0.10);
     z-index: 2;
     position: relative;
+    backdrop-filter: blur(1.5px);
   }
   .faq-section h2 {
     color: #232323;

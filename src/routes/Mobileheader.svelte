@@ -72,7 +72,7 @@
     color: white;
   }
   .list {
-    background-color: rgba(23, 23, 23, 0.85);
+    background-color: rgba(23, 23, 23, 0.75);
     padding: 0 20px 30% 20px;
     position: fixed;
     z-index: 1000;
@@ -84,6 +84,7 @@
     gap: 10px; */
     transform: translateY(100%);
     transition: all 1s ease;
+    backdrop-filter: blur(3px);
   }
   .list_in {
     transform: translateY(0%);
@@ -124,7 +125,8 @@
     position: sticky;
     top: 0;
     z-index: 5;
-    background-color: rgba(23, 23, 23, 0.85);
+    background-color: rgba(23, 23, 23, 0.75);
+    backdrop-filter: blur(3px);
   }
   .logo {
     width: 100%;

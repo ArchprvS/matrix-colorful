@@ -27,6 +27,7 @@
     margin-top: 8vh;
     z-index: 2;
     position: relative;
+    backdrop-filter: blur(3px);
   }
   .footer-content {
     max-width: 1100px;

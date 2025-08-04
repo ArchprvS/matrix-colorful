@@ -43,7 +43,7 @@
   let particles = Array.from({ length: 100 }, (_, i) => ({
     id: i,
     size: Math.random() * 12 + 8, // Particle size between 2-6px
-    hue: 350 + Math.random() * 50, // Random hue for color variation
+    hue: 280 + Math.random() * 120, // Random hue for color variation
     delay: Math.random() * 10, // Random animation delay up to 2s
     angle: Math.random() * 360, // Random angle for radial movement
   }));
@@ -64,7 +64,7 @@
         style="
         width: {particle.size}px;
         height: {particle.size}px;
-        --color: hsl({particle.hue}, 65%, 65%);
+        --color: hsl({particle.hue}, 80%, 80%);
         animation-delay: {particle.delay}s;
         --angle: {particle.angle}deg;
       "
@@ -80,17 +80,19 @@
   .banner {
     width: 100%;
     max-width: 1100px;
-    min-height: 85vh;
+    min-height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(245, 245, 245, 0.65);
+    background: rgba(245, 245, 245, 0.5);
+    border: 1px solid rgb(245, 245, 245);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     border-radius: 2vw;
     margin: 4vh auto 4vh auto;
     position: relative;
     z-index: 2;
     overflow: hidden;
+    backdrop-filter: blur(1.5px);
   }
   .banner-content {
     text-align: center;
@@ -114,7 +116,7 @@
     font-size: 4vh;
     font-weight: 600;
     margin-bottom: 2vh;
-    color: #444;
+    color: #303030;
     text-shadow: 0 1px 8px #fff6;
     transform: translateY(-70px);
     transition: all 1s ease;
@@ -216,6 +218,22 @@
       margin-bottom: 30px;
     }
   }
+  @media (max-width: 430px) {
+    .banner-content h1 {
+      font-size: 33px;
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+    .banner-content p {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+    .banner-content button {
+      font-size: 25px;
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+  }
 
   .particle {
     position: absolute;
@@ -223,7 +241,7 @@
     border-radius: 50%;
     background: var(--color);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    animation: emit 6s linear infinite;
+    animation: emit 5s linear infinite;
     transform-origin: center;
     top: 50%;
     left: 50%;
@@ -235,8 +253,11 @@
       opacity: 0;
       transform: translate(0, 0) scale(0.3);
     }
-    50% {
+    15% {
       opacity: 0.5;
+    }
+    50% {
+      opacity: 0.75;
     }
     75% {
       opacity: 1;
