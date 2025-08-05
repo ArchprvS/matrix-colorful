@@ -1,4 +1,6 @@
 <script>
+  import { onMount } from 'svelte';
+
   const steps = [
     {
       title: "Analiza potrzeb klienta",
@@ -17,13 +19,35 @@
       desc: "Publikujemy i konfigurujemy Twój projekt, zapewniając wsparcie po wdrożeniu.",
     },
   ];
+
+  let sectionVisible = false;
+
+  onMount(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            sectionVisible = true;
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    const section = document.querySelector('#cre_sec');
+    if (section) observer.observe(section);
+
+    return () => observer.disconnect();
+  });
 </script>
 
-<section id="cre_sec" class="process">
-  <h2>Proces tworzenia</h2>
+<section id="cre_sec" class="process" class:visible={sectionVisible}>
+  <h2 class="section-title" class:animate-title={sectionVisible}>
+    Proces tworzenia
+  </h2>
   <div class="steps">
     {#each steps as step, i}
-      <div class="step">
+      <div class="step" class:visible={sectionVisible} style="--delay: {i * 0.15}s;">
         <div class="circle">{i + 1}</div>
         <div class="step-content">
           <h3>{step.title}</h3>
@@ -47,8 +71,17 @@
     z-index: 2;
     position: relative;
     backdrop-filter: blur(1.5px);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .process h2 {
+
+  .process.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-title {
     color: #232323;
     font-family: "Rajdhani", "Segoe UI", Arial, sans-serif;
     font-size: clamp(2rem, 4vw, 2.8rem);
@@ -57,13 +90,33 @@
     letter-spacing: 0.04em;
     text-shadow: 0 2px 16px #fff8;
     font-weight: 700;
+    position: relative;
+    transform: translateY(30px);
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  .section-title.animate-title {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  @keyframes underlineGlow {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+    }
+  }
+
   .steps {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 2vw;
   }
+
   .step {
     flex: 1 1 200px;
     min-width: 220px;
@@ -77,12 +130,35 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: transform 0.2s;
+    opacity: 0;
+    transform: translateY(60px) rotateX(15deg);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  .step.visible {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+    animation: stepEntrance 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: var(--delay, 0s);
+  }
+
+  @keyframes stepEntrance {
+    0% {
+      opacity: 0;
+      transform: translateY(60px) rotateX(15deg) scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) rotateX(0deg) scale(1);
+    }
+  }
+
   .step:hover {
     transform: translateY(-8px) scale(1.03);
     box-shadow: 0 8px 24px #0002;
-    background: rgba(255, 255, 255, 0.652)  }
+    background: rgba(255, 255, 255, 0.652);
+  }
+
   .circle {
     position: absolute;
     top: -1.5em;
@@ -104,7 +180,6 @@
     overflow: visible;
   }
 
-  /* Impulsowy border */
   .circle::after {
     content: "";
     position: absolute;
@@ -140,6 +215,7 @@
     color: #232323;
     font-family: "Rajdhani", "Segoe UI", Arial, sans-serif;
   }
+
   .step-content h3 {
     font-size: 1.25em;
     font-weight: 600;
@@ -147,17 +223,20 @@
     color: #232323;
     text-shadow: 0 1px 8px #fff6;
   }
+
   .step-content p {
     font-size: 1em;
     color: #444;
     line-height: 1.5;
   }
+
   @media (max-width: 900px) {
     .steps {
       flex-direction: column;
       align-items: center;
       gap: 3vh;
     }
+
     .step {
       max-width: 340px;
       width: 90%;

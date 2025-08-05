@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling';
   import { setGlobalOptions } from 'svelte-scrolling';
 
@@ -17,17 +18,39 @@
     }
   ];
 
-  let open = null;
+  let open = $state(null);
+  let sectionVisible = $state(false);
+
   function toggle(idx) {
     open = open === idx ? null : idx;
   }
+
+  onMount(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            sectionVisible = true;
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    const section = document.querySelector('#faq_sec');
+    if (section) observer.observe(section);
+
+    return () => observer.disconnect();
+  });
 </script>
 
-<section id="faq_sec" class="faq-section">
-  <h2>Najczęściej zadawane pytania</h2>
+<section id="faq_sec" class="faq-section" class:visible={sectionVisible}>
+  <h2 class="section-title" class:animate-title={sectionVisible}>
+    Najczęściej zadawane pytania
+  </h2>
   <div class="faq-list">
     {#each faqs as faq, idx}
-      <div class="faq-item">
+      <div class="faq-item" class:visible={sectionVisible} style="--delay: {idx * 0.15}s;">
         <button class="faq-question" on:click={() => toggle(idx)} aria-expanded={open === idx}>
           {faq.question}
           <span class="faq-toggle">{open === idx ? "−" : "+"}</span>
@@ -55,8 +78,17 @@
     z-index: 2;
     position: relative;
     backdrop-filter: blur(1.5px);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .faq-section h2 {
+
+  .faq-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-title {
     color: #232323;
     font-family: "Rajdhani", "Segoe UI", Arial, sans-serif;
     font-size: clamp(2rem, 4vw, 2.2rem);
@@ -65,12 +97,22 @@
     letter-spacing: 0.04em;
     text-shadow: 0 2px 16px #fff8;
     font-weight: 700;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  .section-title.animate-title {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   .faq-list {
     display: flex;
     flex-direction: column;
     gap: 2vh;
   }
+
   .faq-item {
     background: rgba(255,255,255,0.85);
     border-radius: 1em;
@@ -78,7 +120,28 @@
     padding: 0;
     overflow: hidden;
     transition: box-shadow 0.2s;
+    opacity: 0;
+    transform: translateY(60px) rotateX(15deg);
   }
+
+  .faq-item.visible {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+    animation: faqItemEntrance 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: var(--delay, 0s);
+  }
+
+  @keyframes faqItemEntrance {
+    0% {
+      opacity: 0;
+      transform: translateY(60px) rotateX(15deg) scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) rotateX(0deg) scale(1);
+    }
+  }
+
   .faq-question {
     width: 100%;
     text-align: left;
@@ -96,9 +159,11 @@
     justify-content: space-between;
     transition: background 0.18s;
   }
+
   .faq-question:hover {
     background: rgba(0,159,227,0.08);
   }
+
   .faq-toggle {
     font-size: 1.5em;
     line-height: 1;
@@ -107,6 +172,7 @@
     font-weight: 700;
     user-select: none;
   }
+
   .faq-answer {
     padding: 0.5em 1.5em 1.2em 1.5em;
     color: #444;
@@ -114,19 +180,23 @@
     font-family: "Segoe UI", Arial, sans-serif;
     animation: fadeInFaq 0.3s;
   }
+
   @keyframes fadeInFaq {
-    from { opacity: 0; transform: translateY(-10px);}
-    to { opacity: 1; transform: translateY(0);}
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
+
   @media (max-width: 700px) {
     .faq-section {
       max-width: 98vw;
       padding: 4vw 2vw;
     }
+
     .faq-question {
       font-size: 1rem;
       padding: 1em 1em;
     }
+
     .faq-answer {
       font-size: 0.98rem;
       padding: 0.2em 1em 1em 1em;

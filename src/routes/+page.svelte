@@ -42,8 +42,8 @@
   <Reals />
   <Contactform />
   <Faq />
-  <Footer />
 </div>
+<Footer />
 
 <style>
   .container {
