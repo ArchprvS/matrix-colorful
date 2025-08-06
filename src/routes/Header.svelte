@@ -23,6 +23,7 @@
     top: 0;
     z-index: 5;
     background-color: rgba(23, 23, 23, 0.85);
+    backdrop-filter: blur(3px);
   }
   .logo {
     width: 100%;

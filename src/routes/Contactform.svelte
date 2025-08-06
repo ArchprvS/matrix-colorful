@@ -2,14 +2,16 @@
   import { onMount } from 'svelte';
   import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling';
   import { setGlobalOptions } from 'svelte-scrolling';
+
   let name = $state('');
   let surname = $state('');
   let email = $state('');
   let subject = $state('');
   let message = $state('');
   let status = $state('');
-
   let sectionVisible = $state(false);
+  let statusVisible = $state(false);
+  let isSectionAnimated = $state(false);
 
   async function handleSubmit() {
     try {
@@ -18,21 +20,36 @@
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, surname, email, subject, message, status })
+        body: JSON.stringify({ name, surname, email, subject, message })
       });
 
       if (response.ok) {
         status = 'Wiadomość wysłana pomyślnie!';
+        statusVisible = true;
         name = '';
         surname = '';
         email = '';
         subject = '';
         message = '';
+        setTimeout(() => {
+          statusVisible = false;
+          status = '';
+        }, 5000); // Reset statusu po 5 sekundach
       } else {
         status = 'Błąd podczas wysyłania wiadomości.';
+        statusVisible = true;
+        setTimeout(() => {
+          statusVisible = false;
+          status = '';
+        }, 5000);
       }
     } catch (error) {
       status = 'Wystąpił błąd. Spróbuj ponownie później.';
+      statusVisible = true;
+      setTimeout(() => {
+        statusVisible = false;
+        status = '';
+      }, 5000);
     }
   }
 
@@ -40,8 +57,10 @@
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && !isSectionAnimated) {
             sectionVisible = true;
+            isSectionAnimated = true;
+            observer.unobserve(entry.target);
           }
         });
       },
@@ -57,7 +76,7 @@
 
 <section id="con_sec" class="contact-form-section" class:visible={sectionVisible}>
   <h2 class="section-title" class:animate-title={sectionVisible}>
-    Cześć {name}! <br>Napisz do nas!
+    Witaj {name || 'Przybyszu'}! <br>Napisz do nas!
   </h2>
   <form class="contact-form" on:submit|preventDefault={handleSubmit}>
     <div class="form-row" class:visible={sectionVisible} style="--delay: {0 * 0.15}s;">
@@ -79,9 +98,7 @@
       <button type="submit">Wyślij wiadomość</button>
     </div>
   </form>
-  {#if status}
-    <p class="status" class:visible={sectionVisible} style="--delay: {6 * 0.15}s;">{status}</p>
-  {/if}
+  <p class="status" class:visible={statusVisible} style="--delay: 0.2s;">{status}</p>
 </section>
 
 <style>
@@ -99,12 +116,23 @@
     backdrop-filter: blur(1.5px);
     opacity: 0;
     transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: sectionEntrance 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   .contact-form-section.visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  @keyframes sectionEntrance {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .section-title {
@@ -118,12 +146,23 @@
     font-weight: 700;
     opacity: 0;
     transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: titleEntrance 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   .section-title.animate-title {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  @keyframes titleEntrance {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .contact-form {
@@ -137,12 +176,10 @@
     flex-direction: column;
     opacity: 0;
     transform: translateY(60px) rotateX(15deg);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation-fill-mode: forwards;
   }
 
   .form-row.visible {
-    opacity: 1;
-    transform: translateY(0) rotateX(0deg);
     animation: formRowEntrance 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     animation-delay: var(--delay, 0s);
   }
@@ -188,7 +225,7 @@
     font-weight: 500;
     font-size: 20px;
     color: #232323;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s, border 0.2s;
     border-radius: 20px;
     cursor: pointer;
     box-shadow: 0 2px 12px #0001;
@@ -208,12 +245,10 @@
     margin-top: 2vh;
     opacity: 0;
     transform: translateY(60px) rotateX(15deg);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation-fill-mode: forwards;
   }
 
   .status.visible {
-    opacity: 1;
-    transform: translateY(0) rotateX(0deg);
     animation: formRowEntrance 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     animation-delay: var(--delay, 0s);
   }

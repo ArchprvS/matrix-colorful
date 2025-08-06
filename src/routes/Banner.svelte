@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
 
   let text = "Projektujemy i wdrażamy po końcową ";
   let dynamic_text_upper = $state("");
@@ -8,10 +8,13 @@
   let release_text = $state(false);
   let release_button = $state(false);
 
+  // Zmienne do przechowywania intervalów dla łatwiejszego czyszczenia
+  let typewriterInterval;
+  let dotBlinkInterval;
+
   const typeWriter = () => {
     let i = 0;
-    let dot = false;
-    const interval_0 = setInterval(() => {
+    typewriterInterval = setInterval(() => {
       if (i < 23) {
         dynamic_text_upper += text[i];
       } else {
@@ -20,33 +23,40 @@
       i++;
       if (i === text.length) {
         release_text = true;
-        setTimeout(() => release_button = true, 500)
+        setTimeout(() => release_button = true, 500);
         dot_status = "#444";
-        clearInterval(interval_0);
-        setInterval(() => {
-          if (dot) {
-            dot_status = "#444";
-            dot = !dot;
-          } else {
-            dot_status = "transparent";
-            dot = !dot;
-          }
+        clearInterval(typewriterInterval);
+
+        // Optymalizacja - użycie pojedynczej zmiennej boolean zamiast sprawdzania warunków
+        let dotVisible = true;
+        dotBlinkInterval = setInterval(() => {
+          dot_status = dotVisible ? "#444" : "transparent";
+          dotVisible = !dotVisible;
         }, 500);
       }
     }, 35);
   };
+
+  // Prekalkulacja cząstek - wykonana raz, zamiast przy każdym renderze
+  const particles = Array.from({ length: 100 }, (_, i) => ({
+    id: i,
+    size: Math.random() * 4 + 8, // Zmieniono z 12 + 8 na 4 + 8 (8-12px zamiast 8-20px)
+    hue: 280 + Math.random() * 120,
+    delay: Math.random() * 10,
+    angle: Math.random() * 360,
+    // Prekalkulacja wartości CSS dla lepszej wydajności
+    transform: `translate(${Math.cos(Math.random() * 360 * Math.PI / 180) * 430}px, ${Math.sin(Math.random() * 360 * Math.PI / 180) * 430}px) scale(1)`
+  }));
+
   onMount(() => {
-    typeWriter(); // Wywołanie w onMount zapewnia reaktywność
-    return () => {}; // Opcjonalne czyszczenie, jeśli potrzebne
+    typeWriter();
   });
 
-  let particles = Array.from({ length: 100 }, (_, i) => ({
-    id: i,
-    size: Math.random() * 12 + 8, // Particle size between 2-6px
-    hue: 280 + Math.random() * 120, // Random hue for color variation
-    delay: Math.random() * 10, // Random animation delay up to 2s
-    angle: Math.random() * 360, // Random angle for radial movement
-  }));
+  // Dodanie onDestroy dla poprawnego czyszczenia zasobów
+  onDestroy(() => {
+    if (typewriterInterval) clearInterval(typewriterInterval);
+    if (dotBlinkInterval) clearInterval(dotBlinkInterval);
+  });
 </script>
 
 <div class="banner">
@@ -65,7 +75,7 @@
         width: {particle.size}px;
         height: {particle.size}px;
         --color: hsl({particle.hue}, 80%, 80%);
-        animation-delay: {particle.delay}s;
+        --delay: {particle.delay}s;
         --angle: {particle.angle}deg;
       "
       ></div>
@@ -77,6 +87,7 @@
   :global(html) {
     scroll-behavior: smooth;
   }
+
   .banner {
     width: 100%;
     max-width: 1100px;
@@ -88,12 +99,15 @@
     border: 1px solid rgb(245, 245, 245);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     border-radius: 2vw;
-    margin: 4vh auto 4vh auto;
+    margin: 4vh auto;
     position: relative;
     z-index: 2;
     overflow: hidden;
     backdrop-filter: blur(1.5px);
+    /* Optymalizacja GPU - wymuszenie tworzenia kompozytnej warstwy */
+    will-change: transform;
   }
+
   .banner-content {
     text-align: center;
     color: #232323;
@@ -101,25 +115,29 @@
     font-family: "Rajdhani", "Segoe UI", Arial, sans-serif;
     letter-spacing: 0.05em;
   }
+
   .banner-content h1 {
     font-size: clamp(4rem, 6vw, 4rem);
     font-weight: 700;
     color: #232323;
-    text-shadow: 0 2px 16px #fff8;
+    text-shadow: 0 2px 16px rgba(255, 255, 255, 0.5);
     text-align: center;
     line-height: 120%;
     z-index: 1000;
     transform: translateY(70px);
-    transition: all 1s ease;
+    transition: transform 1s ease, opacity 1s ease;
+    will-change: transform, opacity;
   }
+
   .banner-content p {
     font-size: 4vh;
     font-weight: 600;
     margin-bottom: 2vh;
     color: #303030;
-    text-shadow: 0 1px 8px #fff6;
+    text-shadow: 0 1px 8px rgba(255, 255, 255, 0.375);
     transform: translateY(-70px);
-    transition: all 1s ease;
+    transition: transform 1s ease, opacity 1s ease;
+    will-change: transform, opacity;
   }
 
   .banner-content button {
@@ -127,13 +145,7 @@
     padding: 10px 20px;
     margin: 5vh auto;
     border: 2px solid #ffffff;
-    background: linear-gradient(
-      110deg,
-      #009fe3bf,
-      #d72679c3,
-      #ffb300c5,
-      #009fe3bf
-    );
+    background: linear-gradient(110deg, #009fe3bf, #d72679c3, #ffb300c5, #009fe3bf);
     background-size: 300% 100%;
     background-position: 0% 50%;
     font-family: "Rajdhani";
@@ -146,22 +158,17 @@
     border-radius: 20px;
     cursor: pointer;
     animation: gradient-move 8s ease-in-out infinite;
+    will-change: transform, background-position;
   }
+
   .releasing {
     opacity: 1 !important;
     transform: translateY(0px) !important;
   }
 
   @keyframes gradient-move {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 
   .banner-content button:hover {
@@ -179,29 +186,54 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      95deg,
-      transparent,
-      #009fe3bf,
-      #d72679c3,
-      #ffb300c5,
-      transparent
-    );
+    background: linear-gradient(95deg, transparent, #009fe3bf, #d72679c3, #ffb300c5, transparent);
     transition: left 0.4s ease-in-out;
-    border-radius: 5px; /* Dodaj border-radius również tutaj, aby gradient był zaokrąglony */
+    border-radius: 5px;
   }
 
   .banner-content button:hover::before {
-    background: linear-gradient(
-      95deg,
-      transparent,
-      #d7d7d7,
-      #a5a5a5,
-      #d9d9d9,
-      transparent
-    );
+    background: linear-gradient(95deg, transparent, #d7d7d7, #a5a5a5, #d9d9d9, transparent);
     left: 100%;
   }
+
+  .particle {
+    position: absolute;
+    opacity: 0;
+    border-radius: 50%;
+    background: var(--color);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    animation: emit 5s linear infinite;
+    animation-delay: var(--delay);
+    transform-origin: center;
+    top: 50%;
+    left: 50%;
+    z-index: -10;
+    /* Optymalizacja wydajności animacji */
+    will-change: transform, opacity;
+    /* Użycie transform3d dla aktywacji GPU */
+    transform: translate3d(0, 0, 0) scale(0.3);
+  }
+
+  @keyframes emit {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 0, 0) scale(0.3);
+    }
+    15% { opacity: 0.5; }
+    50% { opacity: 0.75; }
+    75% { opacity: 1; }
+    90% { opacity: 0.5; }
+    100% {
+      opacity: 0;
+      transform: translate3d(
+        calc(cos(var(--angle)) * 430px),
+        calc(sin(var(--angle)) * 430px),
+        0
+      ) scale(1);
+    }
+  }
+
+  /* Media queries zostają bez zmian */
   @media (max-width: 650px) {
     .banner-content h1 {
       font-size: 40px;
@@ -218,6 +250,7 @@
       margin-bottom: 30px;
     }
   }
+
   @media (max-width: 430px) {
     .banner-content h1 {
       font-size: 33px;
@@ -232,46 +265,6 @@
       font-size: 25px;
       margin-top: 30px;
       margin-bottom: 30px;
-    }
-  }
-
-  .particle {
-    position: absolute;
-    opacity: 0;
-    border-radius: 50%;
-    background: var(--color);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    animation: emit 5s linear infinite;
-    transform-origin: center;
-    top: 50%;
-    left: 50%;
-    z-index: -10;
-  }
-
-  @keyframes emit {
-    0% {
-      opacity: 0;
-      transform: translate(0, 0) scale(0.3);
-    }
-    15% {
-      opacity: 0.5;
-    }
-    50% {
-      opacity: 0.75;
-    }
-    75% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 0.5;
-    }
-    100% {
-      opacity: 0;
-      transform: translate(
-          calc(cos(var(--angle)) * 430px),
-          calc(sin(var(--angle)) * 430px)
-        )
-        scale(1);
     }
   }
 </style>

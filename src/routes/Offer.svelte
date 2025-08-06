@@ -1,7 +1,7 @@
 <script>
-  import { onMount } from 'svelte';
-  import { writable } from 'svelte/store';
+  import { onMount, onDestroy } from 'svelte';
 
+  // Prekalkulowane dane ofert - bez zmian
   const offers = [
     {
       title: "Strony i sklepy internetowe",
@@ -35,45 +35,78 @@
     },
   ];
 
-  let sectionVisible = false;
-  let hoveredCard = null;
-  let mouseX = 0;
-  let mouseY = 0;
+  // Prekalkulowane pozycje cząstek dla lepszej wydajności
+  const particlePositions = [
+    { top: '20%', left: '10%' },
+    { top: '60%', left: '80%' },
+    { top: '30%', left: '70%' },
+    { top: '80%', left: '20%' },
+    { top: '15%', left: '50%' },
+    { top: '70%', left: '10%' },
+    { top: '40%', left: '90%' },
+    { top: '90%', left: '60%' }
+  ];
+
+  let sectionVisible = $state(false);
+  let hoveredCard = $state(null);
+  let mouseX = $state(0);
+  let mouseY = $state(0);
+
+  // Przechowywanie referencji do observer dla łatwiejszego czyszczenia
+  let intersectionObserver;
 
   onMount(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
+    intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]; // Obserwujemy tylko jeden element
+        if (entry.isIntersecting && !sectionVisible) {
           sectionVisible = true;
+          intersectionObserver.unobserve(entry.target);
         }
-      });
-    }, { threshold: 0.2 });
+      },
+      { threshold: 0.2 }
+    );
 
     const section = document.querySelector('.offer-section');
-    if (section) observer.observe(section);
-
-    return () => observer.disconnect();
+    if (section) intersectionObserver.observe(section);
   });
 
+  onDestroy(() => {
+    if (intersectionObserver) {
+      intersectionObserver.disconnect();
+    }
+  });
+
+  // Optymalizacja - użycie requestAnimationFrame dla smooth mouse tracking
+  let rafId;
   function handleMouseMove(event) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    mouseX = ((event.clientX - rect.left) / rect.width) * 100;
-    mouseY = ((event.clientY - rect.top) / rect.height) * 100;
+    if (rafId) return; // Jeśli już jest zaplanowane, pomiń
+
+    rafId = requestAnimationFrame(() => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      mouseX = ((event.clientX - rect.left) / rect.width) * 100;
+      mouseY = ((event.clientY - rect.top) / rect.height) * 100;
+      rafId = null;
+    });
   }
 
-  function handleCardHover(index) {
-    hoveredCard = index;
-  }
-
-  function handleCardLeave() {
-    hoveredCard = null;
-  }
+  // Inline funkcje dla lepszej wydajności (unikamy tworzenia nowych funkcji)
+  const handleCardHover = (index) => hoveredCard = index;
+  const handleCardLeave = () => hoveredCard = null;
 </script>
 
 <section class="offer-section" class:visible={sectionVisible}>
   <div class="background-particles">
     {#each Array(8) as _, i}
-      <div class="particle" style="--delay: {i * 0.5}s; --duration: {8 + i * 2}s;"></div>
+      <div
+        class="particle"
+        style="
+          --delay: {i * 0.5}s;
+          --duration: {8 + i * 2}s;
+          top: {particlePositions[i].top};
+          left: {particlePositions[i].left};
+        "
+      ></div>
     {/each}
   </div>
 
@@ -98,7 +131,7 @@
         <div class="card-glow"></div>
         <div class="offer-icon">
           <div class="icon-wrapper">
-            <img src={offer.src} alt="offer" />
+            <img src={offer.src} alt={offer.title} loading="lazy" />
           </div>
         </div>
         <div class="offer-content">
@@ -132,10 +165,18 @@
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(2px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
   }
 
-  /* .background-particles {
+  .offer-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .background-particles {
     position: absolute;
     top: 0;
     left: 0;
@@ -153,27 +194,19 @@
     border-radius: 50%;
     animation: float var(--duration, 10s) infinite ease-in-out;
     animation-delay: var(--delay, 0s);
+    will-change: transform, opacity;
   }
-
-  .particle:nth-child(1) { top: 20%; left: 10%; }
-  .particle:nth-child(2) { top: 60%; left: 80%; }
-  .particle:nth-child(3) { top: 30%; left: 70%; }
-  .particle:nth-child(4) { top: 80%; left: 20%; }
-  .particle:nth-child(5) { top: 15%; left: 50%; }
-  .particle:nth-child(6) { top: 70%; left: 10%; }
-  .particle:nth-child(7) { top: 40%; left: 90%; }
-  .particle:nth-child(8) { top: 90%; left: 60%; }
 
   @keyframes float {
     0%, 100% {
-      transform: translateY(0px) scale(1);
+      transform: translate3d(0, 0, 0) scale(1);
       opacity: 0.7;
     }
     50% {
-      transform: translateY(-20px) scale(1.2);
+      transform: translate3d(0, -20px, 0) scale(1.2);
       opacity: 1;
     }
-  } */
+  }
 
   .section-title {
     color: #232323;
@@ -182,12 +215,13 @@
     text-align: center;
     margin-bottom: 4vh;
     letter-spacing: 0.04em;
-    text-shadow: 0 2px 16px #fff8;
+    text-shadow: 0 2px 16px rgba(255, 255, 255, 0.5);
     font-weight: 700;
     position: relative;
     transform: translateY(30px);
     opacity: 0;
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
   }
 
   .section-title.animate-title {
@@ -195,10 +229,29 @@
     opacity: 1;
   }
 
+  .title-underline {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+    margin: 1rem auto 0;
+    border-radius: 2px;
+    animation: underlineGlow 2s ease-in-out infinite;
+    will-change: box-shadow;
+  }
+
+  @keyframes underlineGlow {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+    }
+  }
+
   .offer-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 3vw 3vw;
+    gap: 3vw;
     justify-content: center;
   }
 
@@ -215,12 +268,18 @@
     align-items: center;
     opacity: 0;
     transform: translateY(60px) rotateX(15deg);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s ease,
+      background-color 0.3s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    animation-fill-mode: forwards;
+    will-change: transform, opacity, box-shadow;
   }
 
   .offer-card.visible {
@@ -233,16 +292,16 @@
   @keyframes cardEntrance {
     0% {
       opacity: 0;
-      transform: translateY(60px) rotateX(15deg) scale(0.9);
+      transform: translate3d(0, 60px, 0) rotateX(15deg) scale(0.9);
     }
     100% {
       opacity: 1;
-      transform: translateY(0) rotateX(0deg) scale(1);
+      transform: translate3d(0, 0, 0) rotateX(0deg) scale(1);
     }
   }
 
   .offer-card:hover {
-    transform: translateY(-12px) scale(1.05);
+    transform: translate3d(0, -12px, 0) scale(1.05);
     box-shadow: 0 20px 60px rgba(0, 159, 227, 0.25);
     background: rgba(255, 255, 255, 0.7);
   }
@@ -292,6 +351,7 @@
     display: inline-block;
     transform-style: preserve-3d;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
 
   .offer-card:hover .icon-wrapper {
@@ -304,6 +364,7 @@
     z-index: 2;
     filter: drop-shadow(0 4px 12px rgba(0, 159, 227, 0.3));
     transition: filter 0.3s ease;
+    will-change: filter;
   }
 
   .offer-card:hover .icon-wrapper img {
@@ -320,6 +381,7 @@
     letter-spacing: 0.02em;
     position: relative;
     transition: color 0.3s ease;
+    will-change: color;
   }
 
   .offer-card:hover .offer-content h3 {
@@ -333,6 +395,7 @@
     margin: 0;
     font-family: "Segoe UI", Arial, sans-serif;
     transition: transform 0.3s ease;
+    will-change: transform;
   }
 
   .offer-card:hover .offer-content p {
@@ -344,6 +407,7 @@
       flex-direction: column;
       gap: 2vh;
     }
+
     .offer-card {
       max-width: 98vw;
       min-width: 0;

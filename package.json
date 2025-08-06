@@ -18,6 +18,7 @@
 	},
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.8",
+		"svelte-parallax": "^0.6.0",
 		"svelte-scrolling": "^1.5.1"
 	}
 }

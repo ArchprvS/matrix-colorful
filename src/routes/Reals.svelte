@@ -3,11 +3,11 @@
 
   const realizacje = [
     { name: "Firma A", src: "AVENET.svg", url: "https://firma-a.pl" },
-    { name: "Firma B", src: "bajlando.png", url: "https://firma-b.pl" },
+    { name: "Firma B", src: "bajlando.webp", url: "https://firma-b.pl" },
     { name: "Firma C", src: "logo-my-deco.webp", url: "https://firma-c.pl" },
-    { name: "Firma D", src: "logo-po-sl.png", url: "https://firma-d.pl" },
+    { name: "Firma D", src: "logo-po-sl.webp", url: "https://firma-d.pl" },
     { name: "Firma E", src: "scg_logo.png", url: "https://firma-e.pl" },
-    { name: "Firma F", src: "logo-ws.png", url: "https://firma-f.pl" },
+    { name: "Firma F", src: "logo_ws.webp", url: "https://firma-f.pl" },
     { name: "Firma G", src: "logo-kronos.png", url: "https://firma-g.pl" },
   ];
 

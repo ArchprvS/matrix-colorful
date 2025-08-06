@@ -1,6 +1,6 @@
 <script>
-  import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling';
-  import { setGlobalOptions } from 'svelte-scrolling';
+  import { scrollTo, scrollRef, scrollTop } from "svelte-scrolling";
+  import { setGlobalOptions } from "svelte-scrolling";
   import { onMount } from "svelte";
 
   import Creating from "./Creating.svelte";
@@ -10,40 +10,39 @@
   import Reals from "./Reals.svelte";
   import Contactform from "./Contactform.svelte";
   import Faq from "./Faq.svelte";
-  import Offer from './Offer.svelte';
-  import Mobileheader from './Mobileheader.svelte';
+  import Offer from "./Offer.svelte";
+  import Mobileheader from "./Mobileheader.svelte";
 
   let screenWidth = 0;
   let isMobile = false;
 
   const updateScreenWidth = () => {
-    screenWidth = window.innerWidth
+    screenWidth = window.innerWidth;
     isMobile = screenWidth < 768;
-  }
+  };
 
   onMount(() => {
     updateScreenWidth();
-    window.addEventListener('resize', updateScreenWidth);
+    window.addEventListener("resize", updateScreenWidth);
 
-    return () => window.removeEventListener('resize', updateScreenWidth);
-  })
-
+    return () => window.removeEventListener("resize", updateScreenWidth);
+  });
 </script>
 
-{#if isMobile}
-  <Mobileheader />
-{:else}
-  <Header />
-{/if}
-<div class="container">
-  <Banner />
-  <Offer />
-  <Creating />
-  <Reals />
-  <Contactform />
-  <Faq />
-</div>
-<Footer />
+  {#if isMobile}
+    <Mobileheader />
+  {:else}
+    <Header />
+  {/if}
+  <div class="container">
+    <Banner />
+    <Offer />
+    <Creating />
+    <Reals />
+    <Contactform />
+    <Faq />
+  </div>
+  <Footer />
 
 <style>
   .container {

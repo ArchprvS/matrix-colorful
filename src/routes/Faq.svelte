@@ -1,8 +1,9 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling';
   import { setGlobalOptions } from 'svelte-scrolling';
 
+  // Prekalkulowane dane FAQ - bez zmian
   const faqs = [
     {
       question: "Ile kosztuje strona internetowa?",
@@ -21,26 +22,33 @@
   let open = $state(null);
   let sectionVisible = $state(false);
 
-  function toggle(idx) {
+  // Przechowywanie referencji do observer
+  let intersectionObserver;
+
+  // Inline funkcja dla lepszej wydajności
+  const toggle = (idx) => {
     open = open === idx ? null : idx;
-  }
+  };
 
   onMount(() => {
-    const observer = new IntersectionObserver(
+    intersectionObserver = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            sectionVisible = true;
-          }
-        });
+        const entry = entries[0]; // Obserwujemy tylko jeden element
+        if (entry.isIntersecting) {
+          sectionVisible = true;
+        }
       },
       { threshold: 0.2 }
     );
 
     const section = document.querySelector('#faq_sec');
-    if (section) observer.observe(section);
+    if (section) intersectionObserver.observe(section);
+  });
 
-    return () => observer.disconnect();
+  onDestroy(() => {
+    if (intersectionObserver) {
+      intersectionObserver.disconnect();
+    }
   });
 </script>
 
@@ -51,12 +59,17 @@
   <div class="faq-list">
     {#each faqs as faq, idx}
       <div class="faq-item" class:visible={sectionVisible} style="--delay: {idx * 0.15}s;">
-        <button class="faq-question" on:click={() => toggle(idx)} aria-expanded={open === idx}>
+        <button
+          class="faq-question"
+          on:click={() => toggle(idx)}
+          aria-expanded={open === idx}
+          aria-controls="faq-answer-{idx}"
+        >
           {faq.question}
-          <span class="faq-toggle">{open === idx ? "−" : "+"}</span>
+          <span class="faq-toggle" aria-hidden="true">{open === idx ? "−" : "+"}</span>
         </button>
         {#if open === idx}
-          <div class="faq-answer">
+          <div class="faq-answer" id="faq-answer-{idx}" role="region">
             {faq.answer}
           </div>
         {/if}
@@ -74,13 +87,14 @@
     background: rgba(245, 245, 245, 0.5);
     border: 1px solid rgb(245, 245, 245);
     border-radius: 2vw;
-    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.10);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     z-index: 2;
     position: relative;
     backdrop-filter: blur(1.5px);
     opacity: 0;
     transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
   }
 
   .faq-section.visible {
@@ -95,11 +109,12 @@
     text-align: center;
     margin-bottom: 3vh;
     letter-spacing: 0.04em;
-    text-shadow: 0 2px 16px #fff8;
+    text-shadow: 0 2px 16px rgba(255, 255, 255, 0.5);
     font-weight: 700;
     opacity: 0;
     transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
   }
 
   .section-title.animate-title {
@@ -114,14 +129,15 @@
   }
 
   .faq-item {
-    background: rgba(255,255,255,0.85);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 1em;
-    box-shadow: 0 2px 12px #0001;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.067);
     padding: 0;
     overflow: hidden;
-    transition: box-shadow 0.2s;
+    transition: box-shadow 0.2s ease;
     opacity: 0;
     transform: translateY(60px) rotateX(15deg);
+    will-change: transform, opacity;
   }
 
   .faq-item.visible {
@@ -134,11 +150,11 @@
   @keyframes faqItemEntrance {
     0% {
       opacity: 0;
-      transform: translateY(60px) rotateX(15deg) scale(0.9);
+      transform: translate3d(0, 60px, 0) rotateX(15deg) scale(0.9);
     }
     100% {
       opacity: 1;
-      transform: translateY(0) rotateX(0deg) scale(1);
+      transform: translate3d(0, 0, 0) rotateX(0deg) scale(1);
     }
   }
 
@@ -157,11 +173,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: background 0.18s;
+    transition: background-color 0.18s ease;
+    will-change: background-color;
   }
 
   .faq-question:hover {
-    background: rgba(0,159,227,0.08);
+    background: rgba(0, 159, 227, 0.08);
+  }
+
+  .faq-question:focus {
+    background: rgba(0, 159, 227, 0.12);
+    outline: 2px solid rgba(0, 159, 227, 0.3);
+    outline-offset: -2px;
   }
 
   .faq-toggle {
@@ -171,6 +194,12 @@
     color: #009fe3;
     font-weight: 700;
     user-select: none;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  .faq-question[aria-expanded="true"] .faq-toggle {
+    transform: rotate(180deg);
   }
 
   .faq-answer {
@@ -178,12 +207,19 @@
     color: #444;
     font-size: 1.08rem;
     font-family: "Segoe UI", Arial, sans-serif;
-    animation: fadeInFaq 0.3s;
+    animation: fadeInFaq 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
   }
 
   @keyframes fadeInFaq {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    0% {
+      opacity: 0;
+      transform: translate3d(0, -10px, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
   }
 
   @media (max-width: 700px) {
@@ -194,7 +230,7 @@
 
     .faq-question {
       font-size: 1rem;
-      padding: 1em 1em;
+      padding: 1em;
     }
 
     .faq-answer {

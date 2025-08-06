@@ -1,6 +1,7 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
 
+  // Prekalkulowane dane - bez zmian
   const steps = [
     {
       title: "Analiza potrzeb klienta",
@@ -20,24 +21,31 @@
     },
   ];
 
-  let sectionVisible = false;
+  let sectionVisible = $state(false);
+
+  // Przechowywanie referencji do observer
+  let intersectionObserver;
 
   onMount(() => {
-    const observer = new IntersectionObserver(
+    intersectionObserver = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            sectionVisible = true;
-          }
-        });
+        const entry = entries[0]; // Obserwujemy tylko jeden element
+        if (entry.isIntersecting && !sectionVisible) {
+          sectionVisible = true;
+          intersectionObserver.unobserve(entry.target);
+        }
       },
       { threshold: 0.2 }
     );
 
     const section = document.querySelector('#cre_sec');
-    if (section) observer.observe(section);
+    if (section) intersectionObserver.observe(section);
+  });
 
-    return () => observer.disconnect();
+  onDestroy(() => {
+    if (intersectionObserver) {
+      intersectionObserver.disconnect();
+    }
   });
 </script>
 
@@ -73,7 +81,8 @@
     backdrop-filter: blur(1.5px);
     opacity: 0;
     transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
   }
 
   .process.visible {
@@ -88,26 +97,17 @@
     text-align: center;
     margin-bottom: 5vh;
     letter-spacing: 0.04em;
-    text-shadow: 0 2px 16px #fff8;
+    text-shadow: 0 2px 16px rgba(255, 255, 255, 0.5);
     font-weight: 700;
-    position: relative;
-    transform: translateY(30px);
     opacity: 0;
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
   }
 
   .section-title.animate-title {
-    transform: translateY(0);
     opacity: 1;
-  }
-
-  @keyframes underlineGlow {
-    0%, 100% {
-      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
-    }
-    50% {
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
-    }
+    transform: translateY(0);
   }
 
   .steps {
@@ -125,14 +125,19 @@
     border-radius: 1.2em;
     padding: 2.5em 1.2em 1.2em 1.2em;
     margin: 0 auto;
-    box-shadow: 0 2px 12px #0001;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.067);
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     opacity: 0;
     transform: translateY(60px) rotateX(15deg);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s ease;
+    animation-fill-mode: forwards;
+    will-change: transform, opacity;
   }
 
   .step.visible {
@@ -145,18 +150,12 @@
   @keyframes stepEntrance {
     0% {
       opacity: 0;
-      transform: translateY(60px) rotateX(15deg) scale(0.9);
+      transform: translate3d(0, 60px, 0) rotateX(15deg) scale(0.9);
     }
     100% {
       opacity: 1;
-      transform: translateY(0) rotateX(0deg) scale(1);
+      transform: translate3d(0, 0, 0) rotateX(0deg) scale(1);
     }
-  }
-
-  .step:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 8px 24px #0002;
-    background: rgba(255, 255, 255, 0.652);
   }
 
   .circle {
@@ -174,10 +173,11 @@
     justify-content: center;
     font-size: 1.6em;
     font-weight: 700;
-    box-shadow: 0 2px 8px #0002;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.133);
     border: 3px solid #fff;
     z-index: 1;
     overflow: visible;
+    will-change: transform;
   }
 
   .circle::after {
@@ -186,13 +186,14 @@
     inset: -10px;
     border-radius: 50%;
     border: 3px solid transparent;
-    border-top: 3px solid #00b7ffba;
+    border-top: 3px solid rgba(0, 183, 255, 0.729);
     border-right: 3px solid rgba(223, 14, 129, 0.737);
     border-bottom: 3px solid rgba(223, 208, 7, 0.841);
     border-left: 3px solid rgba(249, 87, 0, 0.811);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s ease;
+    will-change: transform, opacity;
   }
 
   .step:hover .circle::after {
@@ -221,7 +222,7 @@
     font-weight: 600;
     margin-bottom: 0.6em;
     color: #232323;
-    text-shadow: 0 1px 8px #fff6;
+    text-shadow: 0 1px 8px rgba(255, 255, 255, 0.375);
   }
 
   .step-content p {
