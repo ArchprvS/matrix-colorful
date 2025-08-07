@@ -157,14 +157,14 @@
     max-width: 1100px;
     margin: 8vh auto 4vh auto;
     padding: 4vh 4vw;
-    background: rgba(245, 245, 245, 0.5);
+    background: rgba(245, 245, 245, 0.1);
     border: 1px solid rgb(245, 245, 245);
     border-radius: 2vw;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     z-index: 2;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(3px);
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -209,7 +209,7 @@
   }
 
   .section-title {
-    color: #232323;
+    color: #e7e7e7;
     font-family: "Rajdhani", "Segoe UI", Arial, sans-serif;
     font-size: clamp(2rem, 4vw, 2.2rem);
     text-align: center;
@@ -350,12 +350,13 @@
     position: relative;
     display: inline-block;
     transform-style: preserve-3d;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
   }
 
   .offer-card:hover .icon-wrapper {
-    transform: rotateY(360deg) scale(1.1);
+    transform: rotateY(360deg);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .icon-wrapper img {

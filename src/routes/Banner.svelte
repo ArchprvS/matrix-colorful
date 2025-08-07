@@ -24,13 +24,13 @@
       if (i === text.length) {
         release_text = true;
         setTimeout(() => release_button = true, 500);
-        dot_status = "#444";
+        dot_status = "#fff";
         clearInterval(typewriterInterval);
 
         // Optymalizacja - użycie pojedynczej zmiennej boolean zamiast sprawdzania warunków
         let dotVisible = true;
         dotBlinkInterval = setInterval(() => {
-          dot_status = dotVisible ? "#444" : "transparent";
+          dot_status = dotVisible ? "#fff" : "transparent";
           dotVisible = !dotVisible;
         }, 500);
       }
@@ -95,7 +95,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(245, 245, 245, 0.5);
+    background: rgba(245, 245, 245, 0.1);
     border: 1px solid rgb(245, 245, 245);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     border-radius: 2vw;
@@ -103,7 +103,7 @@
     position: relative;
     z-index: 2;
     overflow: hidden;
-    backdrop-filter: blur(1.5px);
+    backdrop-filter: blur(3px);
     /* Optymalizacja GPU - wymuszenie tworzenia kompozytnej warstwy */
     will-change: transform;
   }
@@ -119,7 +119,7 @@
   .banner-content h1 {
     font-size: clamp(4rem, 6vw, 4rem);
     font-weight: 700;
-    color: #232323;
+    color: #e7e7e7;
     text-shadow: 0 2px 16px rgba(255, 255, 255, 0.5);
     text-align: center;
     line-height: 120%;
@@ -133,7 +133,7 @@
     font-size: 4vh;
     font-weight: 600;
     margin-bottom: 2vh;
-    color: #303030;
+    color: #e7e7e7;
     text-shadow: 0 1px 8px rgba(255, 255, 255, 0.375);
     transform: translateY(-70px);
     transition: transform 1s ease, opacity 1s ease;

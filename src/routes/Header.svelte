@@ -23,11 +23,11 @@
     top: 0;
     z-index: 5;
     background-color: rgba(23, 23, 23, 0.85);
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(1.5px);
   }
   .logo {
     width: 100%;
-    max-width: 200px;
+    max-width: 250px;
     padding: 5px 20px 0px 20px;
     cursor: pointer;
 
@@ -41,13 +41,13 @@
     padding-bottom: 10px;
     font-family: "Rajdhani";
     font-size: 20px;
-    font-weight: 800;
+    font-weight: 500;
     text-align: center;
     text-decoration: none;
     border: none;
     /* background-color: rgba(23, 23, 23, 0.85); */
     background-color: transparent;
-    color: silver;
+    color: rgb(255, 255, 255);
     transition: all 0.2s ease;
   }
   .menuitem:hover {
@@ -55,9 +55,11 @@
     margin: 0 auto;
     font-family: "Rajdhani";
     border: none;
-    background-color: rgba(245, 245, 245, 0.65);
-    color: rgb(30, 30, 30);
+    background-color: rgba(255, 255, 255, 0.695);
+    text-shadow: 0 3px 16px rgba(30, 30, 30, 0.842);
+    color: #282828;
     cursor: pointer;
     transform: scale(1.03);
+    font-weight: 600;
   }
 </style>

@@ -76,12 +76,12 @@
     max-width: 1100px;
     margin: 8vh auto 4vh auto;
     padding: 4vh 2vw;
-    background: rgba(245, 245, 245, 0.5);
+    background: rgba(245, 245, 245, 0.1);
     border: 1px solid rgb(245, 245, 245);
     border-radius: 2vw;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     position: relative;
-    backdrop-filter: blur(1.5px);
+    backdrop-filter: blur(3px);
     opacity: 0;
     transform: translateY(30px);
     transition: all 0.8s ease;
@@ -98,7 +98,7 @@
   }
 
   .section-title {
-    color: #232323;
+    color: #e7e7e7;
     font-family: "Rajdhani", "Segoe UI", Arial, sans-serif;
     font-size: clamp(2rem, 4vw, 2.8rem);
     text-align: center;
@@ -117,7 +117,7 @@
   }
 
   .title-text {
-    color: #232323;
+    color: #e7e7e7;
   }
 
   @keyframes underlineGlow {
