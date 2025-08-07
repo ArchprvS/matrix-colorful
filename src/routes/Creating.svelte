@@ -74,7 +74,7 @@
     padding: 4vh 2vw;
     background: rgba(245, 245, 245, 0.1);
     border: 1px solid rgb(245, 245, 245);
-    border-radius: 2vw;
+    border-radius: 1vw;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     z-index: 2;
     position: relative;

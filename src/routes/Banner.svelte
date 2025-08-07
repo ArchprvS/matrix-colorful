@@ -98,7 +98,7 @@
     background: rgba(245, 245, 245, 0.1);
     border: 1px solid rgb(245, 245, 245);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-    border-radius: 2vw;
+    border-radius: 1vw;
     margin: 4vh auto;
     position: relative;
     z-index: 2;
